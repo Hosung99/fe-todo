@@ -17,9 +17,8 @@ const currentStatus = {
     doing:0,
     done:0,
 };
-
 const statusName = ["todo","doing","done"];
 
-exports.todos=todos;
-exports.currentStatus=currentStatus;
-exports.statusName=statusName;
+module.exports = {
+    todos,currentStatus,statusName
+};

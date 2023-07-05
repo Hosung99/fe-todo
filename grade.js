@@ -36,9 +36,8 @@ function showStatus(argv2){
         let argv2Count = currentStatus[argv2];
         let answer = `${argv2}리스트: 총 ${argv2Count}건 : `;
         todos.forEach((value) => {
-            if(value.status === argv2){
+            if(value.status === argv2)
                 answer += `' ${value.name}, ${value.id}', `;
-            }
         });
         answer = answer.substring(0,answer.length-2);
         console.log(answer);
@@ -91,16 +90,34 @@ function deleteItem(argv2){
     if (todos.length === 0)
         console.log("todo-list가 비어있습니다.");
     else{
-        if (doDelte(argv2))
-            console.log("없는 아이디 입니다.");
+        doDelte(argv2, checkId(argv2));
         printCurrentStatus();
     }
 }
 
-function doDelte(argv2){
+function checkId(argv2){
+    if (argv2[0] === '[' && argv2[-1] === ']')
+        return 'Tag';
+    else if(!isNaN(argv2))
+        return 'Id';
+    else
+        return 'Error';
+}
+
+//태그를 여러개 입력 받을 수도 있다. ex)delete$["a","b","c"]
+function doDelte(argv2, checkId){
+    if (checkId === 'Id')
+        deleteUsingId(argv2);
+    else if (checkId === 'Tag')
+        deleteUsingTag(argv2);
+    else
+        console.log("잘못입력하셨습니다.");
+}
+
+function deleteUsingId(argv2){
     let existFlag = 1;
     todos.forEach((todo,index)=>{
-        if(argv2 === todo.id)
+        if(argv2 == todo.id)
         {
             console.log(`${todo.name} ${todo.status}가 목록에서 삭제됐습니다`);
             currentStatus[todo.status]--;
@@ -108,7 +125,12 @@ function doDelte(argv2){
             existFlag = 0;
         }
     });
-    return existFlag;
+    if (existFlag)
+        console.log("없는 아이디입니다.");
+}
+
+function deleteUsingTag(argv2){
+
 }
 
 function update(argv2,argv3){
