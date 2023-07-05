@@ -96,7 +96,7 @@ function deleteItem(argv2){
 }
 
 function checkId(argv2){
-    if (argv2[0] === '[' && argv2[-1] === ']')
+    if (argv2[0] == '[' && argv2.at(-1) == ']')
         return 'Tag';
     else if(!isNaN(argv2))
         return 'Id';
@@ -104,7 +104,6 @@ function checkId(argv2){
         return 'Error';
 }
 
-//태그를 여러개 입력 받을 수도 있다. ex)delete$["a","b","c"]
 function doDelte(argv2, checkId){
     if (checkId === 'Id')
         deleteUsingId(argv2);
@@ -118,19 +117,33 @@ function deleteUsingId(argv2){
     let existFlag = 1;
     todos.forEach((todo,index)=>{
         if(argv2 == todo.id)
-        {
-            console.log(`${todo.name} ${todo.status}가 목록에서 삭제됐습니다`);
-            currentStatus[todo.status]--;
-            todos.splice(index,1);
-            existFlag = 0;
-        }
+            existFlag = deleteStatus(todo, index);
     });
     if (existFlag)
         console.log("없는 아이디입니다.");
 }
 
 function deleteUsingTag(argv2){
+    //추가 기능 : 만약 ["a","b"]로 들어오면 정확히 a,b가 들어간 태그만 삭제하고싶으면??
+    let existFlag = 1;
+    let tempArray = argv2.replace("[", "").replace("]", "").replace(/"/gi, "").split(',');
+    tempArray.forEach((value)=>{
+        todos.forEach((todo)=>{
+            todo.tags.forEach((tag,index)=>{
+                if (tag == value)
+                    existFlag = deleteStatus(todo, index);
+            });
+        });
+    });
+    if (existFlag)
+        console.log("없는 태그 입니다.");
+}
 
+function deleteStatus(todo, index){
+    console.log(`${todo.name} ${todo.status}가 목록에서 삭제됐습니다`);
+    currentStatus[todo.status]--;
+    todos.splice(index,1);
+    return 0;
 }
 
 function update(argv2,argv3){
